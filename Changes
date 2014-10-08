@@ -1,5 +1,7 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+        - fixed copying vhost files, if directory not supplied.
+
 1.00	2014-10-08
         - first official release

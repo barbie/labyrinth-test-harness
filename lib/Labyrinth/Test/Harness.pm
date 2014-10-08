@@ -116,6 +116,7 @@ sub prep {
     mkpath($directory) or ( $self->{error} = "cannot create test directory" && return 0 );
 
     for my $dir ('html','cgi-bin') {
+        next    unless(-d "vhost/$dir");
         unless ($self->copy_files("vhost/$dir","$directory/$dir")) {
             $self->{error} = "cannot create test files: " . $self->{error};
             return 0;
