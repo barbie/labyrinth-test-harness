@@ -14,7 +14,7 @@ Labyrinth::Test::Harness - Test Harness for Labyrinth Plugin modules
 
 =head1 SYNOPSIS
 
-    my $harness = Labyrinth::Test::Harness->new();
+    my $harness = Labyrinth::Test::Harness->new( %options );
 
     my $res = $harness->prep('file1.sql','file2.sql');
 
@@ -88,21 +88,22 @@ sub new {
     my $self = {};
     bless $self, $class;
 
-    $self->config(      $hash{config}    || $CONFIG    );
-    $self->directory(   $hash{directory} || $DIRECTORY );
+    $self->keep(        $hash{keep}      || 0           );
+    $self->config(      $hash{config}    || $CONFIG     );
+    $self->directory(   $hash{directory} || $DIRECTORY  );
 
     return $self;
 }
 
 sub DESTROY {
     my $self = shift;
-    $self->cleanup;
+    $self->cleanup  unless($self->keep);
 }
 
 #----------------------------------------------------------------------------
 # Object Methods
 
-__PACKAGE__->mk_accessors(qw( config directory ));
+__PACKAGE__->mk_accessors(qw( config directory keep ));
 
 sub prep {
     my ($self,@sql) = @_;
@@ -442,14 +443,35 @@ Defines a default config file and directory, unless otherwise provided.
 
 Options available are:
 
+  keep      => 1            # default is 0
   config    => $config
   directory => $directory
+
+When a harness object goes out of scope, the DESTROY method is called, unless
+'keep' is a true value, the cleanup method will be automatically called.
+
+'config' and 'directory' preset the respective file and directory names, 
+although these can also be set by the respective methods calls prior to 
+calling the prep method.
 
 =back
 
 =head2 Public Methods
 
 =over
+
+=item keep( $value )
+
+If set to a true value, don't cleanup when object oes out of scope.
+
+=item config( $value )
+
+Set the name of the file to use as the configuration file. Default is 
+'t/_DBDIR/test-config.ini'.
+
+=item directory( $value )
+
+Set the name of the working directory. Default is 't/_DBDIR'.
 
 =item prep( @sql )
 
