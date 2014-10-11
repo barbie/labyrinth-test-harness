@@ -4,7 +4,7 @@ use warnings;
 use strict;
 $|++;
 
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 #----------------------------------------------------------------------------
 
@@ -15,9 +15,8 @@ Labyrinth::Test::Harness - Test Harness for Labyrinth Plugin modules
 =head1 SYNOPSIS
 
     my $harness = Labyrinth::Test::Harness->new();
-    $harness->new();
 
-    my $res = $harness->prep('file1.sql',;file2.sql');
+    my $res = $harness->prep('file1.sql','file2.sql');
 
     $res = $harness->labyrinth(@plugins);
 

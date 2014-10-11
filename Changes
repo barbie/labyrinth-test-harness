@@ -1,6 +1,7 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+1.01	2014-10-16
         - fixed copying vhost files, if directory not supplied.
         - extended functional test suite and files.
 
