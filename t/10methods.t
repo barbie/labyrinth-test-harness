@@ -10,11 +10,11 @@ my @plugins = ( 'Labyrinth::Plugin::Base' );
 
 my $test_vars1 = {
     'testing' => '0',
-    'copyright' => '2002-2014 Barbie',
+    'copyright' => '2013-2014 Me',
     'cgiroot' => 'http:/',
     'lastpagereturn' => '0',
     'autoguest' => '1',
-    'administrator' => 'barbie@cpan.org',
+    'administrator' => 'admin@example.com',
     'timeout' => '3600',
     'docroot' => 'http:/',
     'blank' => 'images/blank.png',
@@ -43,9 +43,9 @@ my $test_vars1 = {
 
 my $test_vars2 = {
     'testing' => '0',
-    'copyright' => '2002-2014 Barbie',
+    'copyright' => '2013-2014 Me',
     'cgiroot' => 'http:/',
-    'administrator' => 'barbie@cpan.org',
+    'administrator' => 'admin@example.com',
     'timeout' => '3600',
     'user' => {
         'email' => 'barbie@example.com',
@@ -111,11 +111,11 @@ my $test_vars2 = {
 
 my $test_vars3 = {
     'testing' => '0',
-    'copyright' => '2002-2014 Barbie',
+    'copyright' => '2013-2014 Me',
     'cgiroot' => 'http:/',
     'lastpagereturn' => '0',
     'autoguest' => '1',
-    'administrator' => 'barbie@cpan.org',
+    'administrator' => 'admin@example.com',
     'timeout' => '3600',
     'docroot' => 'http:/',
     'blank' => 'images/blank.png',
@@ -149,7 +149,9 @@ my $loader = Labyrinth::Test::Harness->new;
 my $dir = $loader->directory;
 #diag("directory=$dir");
 
-my $res = $loader->prep("$dir/cgi-bin/db/plugin-base.sql","t/data/test-base.sql");
+my $res = $loader->prep(
+    sql => [ "$dir/cgi-bin/db/plugin-base.sql","t/data/test-base.sql" ]
+);
 diag($loader->error)    unless($res);
 
 SKIP: {
