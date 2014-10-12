@@ -134,6 +134,7 @@ sub prep {
                 return 0;
             }
         }
+    }
 
     # prep database
     eval "use Test::Database";
@@ -364,7 +365,7 @@ sub create_config {
             administrator   => 'admin@example.com',
             mailhost        => '',
             cookiename      => 'session',
-            timeout         => 3600',
+            timeout         => 3600,
             autoguest       => 1,
             copyright       => '2013-2014 Me',
             lastpagereturn  => 0,
@@ -397,9 +398,10 @@ sub create_config {
     );
 
     if($user_config) {
-    for my $section (keys %$user_config) {
-        for my $key (keys %{$user_config{$section}}) {
-            $CONFIG{$section}{$key} = $user_config{$section}{$key};
+        for my $section (keys %$user_config) {
+            for my $key (keys %{$user_config->{$section}}) {
+                $CONFIG{$section}{$key} = $user_config->{$section}{$key};
+            }
         }
     }
 
