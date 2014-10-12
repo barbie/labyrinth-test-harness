@@ -9,6 +9,7 @@ Changes for the Labyrinth-Test-Harness
           - 'sql' list sql files.
           - files copies additional files into test environment.
           - config allows addition configuration in the config file.
+        - added copy_file.
 
 1.00	2014-10-08
         - first official release

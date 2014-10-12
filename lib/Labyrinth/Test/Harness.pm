@@ -606,6 +606,10 @@ Returns the last error recorded.
 
 Copies files between the source and target directories.
 
+=item copy_file( $source, $target )
+
+Copies a single file from source to target.
+
 =item create_config( $db_config )
 
 Creates a configuration file.
