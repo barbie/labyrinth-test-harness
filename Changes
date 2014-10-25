@@ -1,6 +1,9 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+	- added ability to set environment variables, or default to settings 
+	  that allow Labyrinth to work in a test environment.
+
 1.01	2014-10-16
         - fixed copying vhost files, if directory not supplied.
         - extended functional test suite and files.

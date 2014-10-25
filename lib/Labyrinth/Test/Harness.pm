@@ -167,6 +167,20 @@ sub prep {
         return 0;
     }
 
+    # prep environment variables
+
+    my %env = (
+        SERVER_PROTOCOL => 'http',
+        SERVER_PORT     => 80,
+        HTTP_HOST       => 'example.com',
+        REQUEST_URI     => '/',
+        PATH_INFO       => undef
+    );
+
+    for my $key (keys %env) {
+        $ENV{$key} = $hash{ENV}{$key} || $env{$key};
+    }
+
     return 1;
 }
 
@@ -237,7 +251,6 @@ sub refresh {
 
 sub clear {
     my ($self) = @_;
-
     %tvars      = ();
     %cgiparams  = ();
 }
@@ -493,6 +506,7 @@ Options available are:
   keep      => 1            # default is 0
   config    => $config
   directory => $directory
+  env       => \%environment
 
 When a harness object goes out of scope, the DESTROY method is called, unless
 'keep' is a true value, the cleanup method will be automatically called.
@@ -500,6 +514,16 @@ When a harness object goes out of scope, the DESTROY method is called, unless
 'config' and 'directory' preset the respective file and directory names, 
 although these can also be set by the respective methods calls prior to 
 calling the prep method.
+
+'env' can contain settings for internal environment variables that are used
+within Labyrinth. The environment variables that can be overridden, together
+with their current defaults, are:
+
+    SERVER_PROTOCOL => 'http',
+    SERVER_PORT     => 80,
+    HTTP_HOST       => 'example.com',
+    REQUEST_URI     => '/',
+    PATH_INFO       => undef
 
 =back
 
