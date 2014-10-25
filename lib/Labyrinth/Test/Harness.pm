@@ -249,6 +249,13 @@ sub refresh {
     $self->set_params( %$params )   if($params);
 }
 
+sub login {
+    my ($self,$id) = @_;
+    return  unless($dbi && $id);
+    my $user = $dbi->GetQuery('hash','GetUserByID',$id);
+    Labyrinth::Session::InternalLogin($user);
+}
+
 sub clear {
     my ($self) = @_;
     %tvars      = ();
@@ -584,6 +591,11 @@ internal hashes.
 
 Essentially a short cut to calling labyrinth(), set_vars() and set_params()
 separately.
+
+=item login( $id )
+
+Given a user id, will automatically log that user into the system. This then
+loads the appropriate permissions for that user.
 
 =item cleanup
 
