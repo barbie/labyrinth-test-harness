@@ -145,7 +145,8 @@ sub prep {
 
     my $td1 = Test::Database->handle( 'mysql' );
     unless($td1) {
-        $self->{error} = "Unable to load  a test database instance";
+        use Data::Dumper;
+        $self->{error} = "Unable to load a test database instance.";
         return 0;
     }
 
