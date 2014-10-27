@@ -253,8 +253,8 @@ sub refresh {
 sub login {
     my ($self,$id) = @_;
     return  unless($dbi && $id);
-    my $user = $dbi->GetQuery('hash','GetUserByID',$id);
-    Labyrinth::Session::InternalLogin($user);
+    my @user = $dbi->GetQuery('hash','GetUserByID',$id);
+    Labyrinth::Session::InternalLogin($user[0]) if(@user);
 }
 
 sub clear {
