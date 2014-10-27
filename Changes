@@ -1,6 +1,7 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+1.02	2014-10-27
 	- added ability to set environment variables, or default to settings 
 	  that allow Labyrinth to work in a test environment.
 	- added login method, to auto-login a named user.
