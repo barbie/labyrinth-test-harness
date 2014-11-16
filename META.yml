@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:                       Labyrinth-Test-Harness
 version:                    1.05
-abstract:                   Links plugin for the Labyrinth framework
+abstract:                   Test Harness for Labyrinth Plugin modules
 author:
   - Barbie <barbie@cpan.org>
 

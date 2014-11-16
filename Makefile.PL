@@ -10,7 +10,7 @@ WriteMakefile(
     AUTHOR              => 'Barbie <barbie@cpan.org>',
     NAME                => 'Labyrinth::Test::Harness',
     VERSION_FROM        => 'lib/Labyrinth/Test/Harness.pm',
-    ABSTRACT            => 'Links plugin for the Labyrinth framework',
+    ABSTRACT            => 'Test Harness for Labyrinth Plugin modules',
     NO_META             => 1,
     PREREQ_PM           => {
 
