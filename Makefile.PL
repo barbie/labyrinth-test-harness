@@ -23,6 +23,7 @@ WriteMakefile(
         'IO::File'              => '0',
         'Labyrinth'             => '5.22',
         'Module::Pluggable'     => '0',
+        'Test::Database'        => '1.113',
 
         # build/test prereqs
         'Test::More'            => '0.70'
