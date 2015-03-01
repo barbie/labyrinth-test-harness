@@ -1,6 +1,8 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+        - add settings hash to refresh method, and associated accessors.
+
 1.07	2014-12-06
         - upgraded to Labyrinth-5.29 due to filter problems.
 

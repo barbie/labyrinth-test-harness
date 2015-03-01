@@ -31,10 +31,12 @@ Labyrinth::Test::Harness - Test Harness for Labyrinth Plugin modules
     $harness->cleanup;
 
     $harness->clear();
-    my $vars   = $harness->vars;
-    my $params = $harness->params;
-    $harness->set_params( name => 'Test', test => 1 );
+    my $vars     = $harness->vars;
+    my $params   = $harness->params;
+    my $settings = $harness->settings;
     $harness->set_vars( name => 'Test', test => 1 );
+    $harness->set_params( name => 'Test', test => 1 );
+    $harness->set_settings( name => 'Test', test => 1 );
 
     my $error = $harness->error;
 
@@ -237,11 +239,12 @@ sub action {
 }
 
 sub refresh {
-    my ($self,$plugins,$vars,$params) = @_;
+    my ($self,$plugins,$vars,$params,$settings) = @_;
 
     $self->labyrinth(@$plugins);
-    $self->set_vars( %$vars )       if($vars);
-    $self->set_params( %$params )   if($params);
+    $self->set_vars( %$vars )           if($vars);
+    $self->set_params( %$params )       if($params);
+    $self->set_settings( %$settings )   if($settings);
 }
 
 sub login {
@@ -278,6 +281,18 @@ sub set_params {
     my ($self,%hash) = @_;
     for my $name (keys %hash) {
         $cgiparams{$name} = $hash{$name}
+    }
+}
+
+sub settings {
+    my ($self) = @_;
+    return \%settings;
+}
+
+sub set_settings {
+    my ($self,%hash) = @_;
+    for my $name (keys %hash) {
+        $settings{$name} = $hash{$name}
     }
 }
 
@@ -622,6 +637,14 @@ returns the current variables hash.
 =item set_vars( %hash )
 
 Adds the given variables to the current variables hash.
+
+=item settings
+
+returns the current settings hash.
+
+=item set_settings( %hash )
+
+Adds the given variables to the current settings hash.
 
 =item error
 
