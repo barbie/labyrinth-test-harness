@@ -4,7 +4,7 @@ use strict;
 use lib qw(t/lib);
 use Labyrinth::Test::Harness;
 
-use Test::More tests => 30;
+use Test::More tests => 32;
 
 my @plugins = ( 'Labyrinth::Plugin::Base' );
 
@@ -224,6 +224,8 @@ SKIP: {
     $loader->clear();
     is_deeply($loader->vars,{});
     is_deeply($loader->params,{});
+    my $settings = $loader->settings;
+    is($settings->{test3},undef);
 
     $loader->refresh( \@plugins );
     is_deeply($loader->vars,    { %$test_vars3 });
@@ -232,9 +234,12 @@ SKIP: {
     $loader->refresh(
         \@plugins,
         { test1 => 1 },
-        { test2 => 2 } );
+        { test2 => 2 },
+        { test3 => 3 } );
     is_deeply($loader->vars,    { test1 => 1, %$test_vars3 });
     is_deeply($loader->params,  { test2 => 2 });
+    $settings = $loader->settings;
+    is($settings->{test3},3);
     
     $loader->refresh(
         \@plugins,
