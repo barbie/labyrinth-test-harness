@@ -1,6 +1,8 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+        - fixed skip test count.
+
 1.08	2015-03-02
         - add settings hash to refresh method, and associated accessors.
 
