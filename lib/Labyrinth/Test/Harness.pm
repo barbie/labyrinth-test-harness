@@ -115,38 +115,30 @@ sub prep {
 
     # prep test directories
     rmtree($directory);
-    mkpath($directory) or ( $self->{error} = "cannot create test directory" && return 0 );
+    mkpath($directory) or return $self->_set_error( "cannot create test directory" );
 
     for my $dir ('html','cgi-bin') {
         next    unless(-d "vhost/$dir");
-        unless ($self->copy_files("vhost/$dir","$directory/$dir")) {
-            $self->{error} = "cannot create test files: " . $self->{error};
-            return 0;
-        }
+        return $self->_set_error( "cannot create test files: " . $self->{error} )
+            unless ($self->copy_files("vhost/$dir","$directory/$dir"));
     }
 
-    mkpath("$directory/html/cache") or ( $self->{error} = "cannot create cache directory" && return 0 );
+    mkpath("$directory/html/cache") or return $self->_set_error( "cannot create cache directory" );
 
     # copy additional files
     if($hash{files}) {
         for my $source (keys %{$hash{files}}) {
             my $target = "$directory/$hash{files}{$source}";
-            unless ($self->copy_file($source,$target)) {
-                $self->{error} = "cannot create test files: " . $self->{error};
-                return 0;
-            }
+            return $self->_set_error( "cannot create test files: " . $self->{error} )
+                unless ($self->copy_file($source,$target));
         }
     }
 
     # prep database
     my $td1 = Test::Database->handle( 'mysql' );
-    unless($td1) {
-        use Data::Dumper;
-        $self->{error} = "Unable to load a test database instance.";
-        return 0;
-    }
+    return $self->_set_error( "Unable to load a test database instance." )  unless($td1);
 
-    return 0    unless create_mysql_databases($td1,$hash{sql});
+    return 0    unless $self->create_mysql_databases($td1,$hash{sql});
 
     my %opts;
     ($opts{dsn}, $opts{dbuser}, $opts{dbpass}) =  $td1->connection_info();
@@ -159,10 +151,8 @@ sub prep {
                         qw(driver database dbfile dbhost dbport dbuser dbpass);
 
     # prep config files
-    unless( $self->create_config(\%db_config,$hash{config}) ) {
-        $self->{error} = "Failed to create config file";
-        return 0;
-    }
+    return $self->_set_error( "Failed to create config file" )
+        unless( $self->create_config(\%db_config,$hash{config}) );
 
     # prep environment variables
 
@@ -220,8 +210,7 @@ sub labyrinth {
     };
 
     return 1    unless($@);
-    $self->{error} = "Failed to load Labyrinth: $@";
-    return 0;
+    return $self->_set_error( "Failed to load Labyrinth: $@" );
 }
 
 sub action {
@@ -234,8 +223,7 @@ sub action {
     };
 
     return 1    unless($@);
-    $self->{error} = "Failed to run action: $action: $@";
-    return 0;
+    return $self->_set_error( "Failed to run action: $action: $@" );
 }
 
 sub refresh {
@@ -302,23 +290,14 @@ sub error {
 }
 
 #----------------------------------------------------------------------------
-# Internal Functions
+# Internal Methods
 
 sub copy_files {
     my ($self,$source_dir,$target_dir) = @_;
 
-    unless($source_dir) {
-        $self->{error} = "no source directory given";
-        return 0;
-    }
-    unless($target_dir) {
-        $self->{error} = "no target directory given";
-        return 0;
-    }
-    unless(-f $source_dir || -d $source_dir) {
-        $self->{error} = "failed to find source directory/file: $source_dir";
-        return 0;
-    }
+    return $self->_set_error( "no source directory given" )                         unless($source_dir);
+    return $self->_set_error( "no target directory given" )                         unless($target_dir);
+    return $self->_set_error( "failed to find source directory/file: $source_dir" ) unless(-f $source_dir || -d $source_dir);
 
     my @dirs = ($source_dir);
     while(@dirs) {
@@ -334,18 +313,16 @@ sub copy_files {
                 next    if(-f $target);
 
                 mkpath( dirname($target) );
-                if(-d dirname($target)) {
-                    copy( $source, $target );
-                } else {
-                    $self->{error} = "failed to created directory: " . dirname($target);
-                    return 0;
-                }
+                return $self->_set_error( "failed to created directory: " . dirname($target) )
+                    unless(-d dirname($target));
+
+                copy( $source, $target );
+
             } elsif(-d $source) {
                 push @dirs, $source;
 
             } else {
-                $self->{error} = "failed to to find source: $source";
-                return 0;
+                return $self->_set_error( "failed to to find source: $source" );
             }
         }
     }
@@ -356,27 +333,16 @@ sub copy_files {
 sub copy_file {
     my ($self,$source,$target) = @_;
 
-    unless($source) {
-        $self->{error} = "no source file given";
-        return 0;
-    }
-    unless($target) {
-        $self->{error} = "no target file given";
-        return 0;
-    }
-    unless(-f $source) {
-        $self->{error} = "failed to find source file: $source";
-        return 0;
-    }
+    return $self->_set_error( "no source file given" )                  unless($source);
+    return $self->_set_error( "no target file given" )                  unless($target);
+    return $self->_set_error( "failed to find source file: $source" )   unless(-f $source);
 
     my $dir = dirname($target);
     mkpath($dir)    unless(-d $dir);
-    if(-d $dir) {
-        copy( $source, $target );
-    } else {
-        $self->{error} = "failed to created directory: $dir";
-        return 0;
-    }
+    return $self->_set_error( "failed to created directory: $dir" )     unless(-d $dir);
+
+    copy( $source, $target );
+    return 1;
 }
 
 sub create_config {
@@ -454,24 +420,18 @@ sub create_config {
 # this is primitive, but works :)
 
 sub create_mysql_databases {
-    my ($db1,$files) = @_;
+    my ($self,$db1,$files) = @_;
 
-    unless($files && @$files > 0) {
-        $self->set_error( "no SQL files provided" );
-        return 0;
-    }
+    return $self->_set_error( "no SQL files provided" ) unless($files && @$files > 0);
 
     my (@statements);
     my $sql = '';
 
     for my $file (@$files) {
 #print STDERR "# file=$file\n";
-        unless($file && -r $file) {
-            $self->{error} = "file '$file' cannot be read";
-            return 0;
-        }
+        return $self->_set_error( "file '$file' cannot be read" )   unless($file && -r $file);
 
-        my $fh = IO::File->new($file,'r') or ( $self->{error} = "file '$file' cannot be opened: $!" and return 0 );
+        my $fh = IO::File->new($file,'r') or return $self->_set_error( "file '$file' cannot be opened: $!" );
         while(<$fh>) {
             next    if(/^--/);  # ignore comment lines
             s/;\s+--.*/;/;      # remove end of line comments
@@ -510,6 +470,15 @@ sub dosql {
     }
 
     return 0;
+}
+
+#----------------------------------------------------------------------------
+# Private(ish) Methods
+
+sub _set_error {
+    my $self = shift;
+    $self->{error} = join(' ',@_);
+    return 0;   # always fail
 }
 
 1;
