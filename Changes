@@ -1,6 +1,7 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+1.10	2015-03-08
         - added error handling around creating database from SQL files.
         - added _set_error method to simplify all error handling.
 
