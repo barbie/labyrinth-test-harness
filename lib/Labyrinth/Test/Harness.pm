@@ -146,7 +146,7 @@ sub prep {
         return 0;
     }
 
-    create_mysql_databases($td1,$hash{sql});
+    return 0    unless create_mysql_databases($td1,$hash{sql});
 
     my %opts;
     ($opts{dsn}, $opts{dbuser}, $opts{dbpass}) =  $td1->connection_info();
@@ -456,14 +456,22 @@ sub create_config {
 sub create_mysql_databases {
     my ($db1,$files) = @_;
 
-    return  unless($files && @$files > 0);
+    unless($files && @$files > 0) {
+        $self->set_error( "no SQL files provided" );
+        return 0;
+    }
 
     my (@statements);
     my $sql = '';
 
     for my $file (@$files) {
 #print STDERR "# file=$file\n";
-        my $fh = IO::File->new($file,'r') or next;
+        unless($file && -r $file) {
+            $self->{error} = "file '$file' cannot be read";
+            return 0;
+        }
+
+        my $fh = IO::File->new($file,'r') or ( $self->{error} = "file '$file' cannot be opened: $!" and return 0 );
         while(<$fh>) {
             next    if(/^--/);  # ignore comment lines
             s/;\s+--.*/;/;      # remove end of line comments
@@ -485,6 +493,8 @@ sub create_mysql_databases {
 
 #print STDERR "# statements=".join("\n# ",@statements)."\n";
     dosql($db1,\@statements);
+
+    return 1;
 }
 
 sub dosql {

@@ -1,6 +1,8 @@
 Changes for the Labyrinth-Test-Harness
 ======================================
 
+        - added error handling around creating database from SQL files.
+
 1.09	2015-03-04
         - fixed skip test count.
 
